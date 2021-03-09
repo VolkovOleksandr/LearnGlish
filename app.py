@@ -7,6 +7,9 @@ from werkzeug.security import check_password_hash, generate_password_hash
 
 from helpers import apology, login_required, checkUserInfo
 from models.user import Users
+from models.topic import Topics
+from models.vocabulary import Vocabularys
+from models.progress import Progress
 from models.db import db
 
 # Configure application

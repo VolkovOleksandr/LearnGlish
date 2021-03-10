@@ -1,12 +1,12 @@
 from tempfile import mkdtemp
-from flask import Flask, flash, redirect, render_template, request, session
+from flask import Flask, flash, redirect, render_template, request, session, jsonify
 from flask_session import Session
 from sqlalchemy.exc import IntegrityError
 from werkzeug.exceptions import default_exceptions, HTTPException, InternalServerError
 from werkzeug.security import check_password_hash, generate_password_hash
 
 from helpers import apology, login_required, checkUserInfo
-from models.user import Users
+from models.user import Users, topic_identifier
 from models.topic import Topics
 from models.vocabulary import Vocabularys
 from models.progress import Progress
@@ -43,7 +43,33 @@ Session(app)
 
 @app.route("/")
 def index():
+
     return render_template("index.html")
+
+
+@app.route("/topics")
+@login_required
+def topics():
+    return render_template("topics.html")
+
+
+@app.route("/topics/add", methods=["POST"])
+@login_required
+def addNewTopic():
+    topic = request.form["topic"]
+    print(topic)
+    flash('You were successfully add new topick')
+    return redirect("/topics")
+
+# TODO rewrite search to check if topick already exist
+
+
+@app.route("/topicSearch", methods=["POST"])
+@login_required
+def topicSearch():
+    data = request.form.get("data")
+    print(data)
+    return jsonify(data)
 
 
 @app.route("/login", methods=["GET", "POST"])
@@ -90,8 +116,6 @@ def register():
                 db.session.add(newUser)
                 db.session.commit()
                 session["user_id"] = newUser.id
-                print(session["user_id"])
-                print(newUser.id)
                 return redirect("/")
             except IntegrityError as e:
                 # Check if User already exist in DB by email

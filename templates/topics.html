@@ -1,0 +1,85 @@
+{% extends "layout.html" %} {% block title %} Login {% endblock %} {% block main
+%}
+<div>
+  <div class="row justify-content-center">
+    <div class="col-6">
+      <h3>Personal topics:</h3>
+    </div>
+    <div class="col-6">
+      <div class="d-flex justify-content-end">
+        <!-- Button trigger modal -->
+        <button
+          type="button"
+          class="btn btn-primary"
+          data-toggle="modal"
+          data-target="#exampleModalCenter"
+        >
+          Add new
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal -->
+<div
+  class="modal fade"
+  id="exampleModalCenter"
+  tabindex="-1"
+  role="dialog"
+  aria-labelledby="exampleModalCenterTitle"
+  aria-hidden="true"
+>
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLongTitle">Add new topic</h5>
+        <button
+          type="button"
+          class="close"
+          data-dismiss="modal"
+          aria-label="Close"
+        >
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form action="topics/add" method="post">
+          <div class="form-group">
+            <input
+              type="text"
+              id="topic"
+              class="form-control"
+              name="topic"
+              autocomplete="off"
+              placeholder="Food, animals, books, ets..."
+            />
+          </div>
+          <!-- TODO neesd to add some verefication field (disable save button)-->
+          <script>
+            $(document).ready(function (e) {
+              $("#topic").on("input", function (e) {
+                test = $("#topic").val();
+                $.ajax({
+                  method: "post",
+                  url: "/topicSearch",
+                  data: { data: test },
+                  success: function (res) {
+                    console.log(res);
+                  },
+                });
+              });
+            });
+          </script>
+          <button type="submit" class="btn btn-primary form-control">
+            Add
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+<hr />
+<h3>Public topics:</h3>
+
+{% endblock %}

@@ -67,7 +67,7 @@ def addNewTopic():
 @app.route("/topicSearch", methods=["POST"])
 @login_required
 def topicSearch():
-    data = request.form.get("data")
+    data = request.get_json()
     print(data)
     return jsonify(data)
 

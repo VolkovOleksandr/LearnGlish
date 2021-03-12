@@ -21,72 +21,11 @@
   </div>
 </div>
 
-<!-- Modal -->
-<div
-  class="modal fade"
-  id="exampleModalCenter"
-  tabindex="-1"
-  role="dialog"
-  aria-labelledby="exampleModalCenterTitle"
-  aria-hidden="true"
->
-  <div class="modal-dialog modal-dialog-centered" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLongTitle">Add new topic</h5>
-        <button
-          type="button"
-          class="close"
-          data-dismiss="modal"
-          aria-label="Close"
-        >
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        <form action="topics/add" method="post">
-          <div class="form-group">
-            <input
-              type="text"
-              id="topic"
-              class="form-control"
-              name="topic"
-              autocomplete="off"
-              placeholder="Food, animals, books, ets..."
-            />
-          </div>
-          <!-- TODO neesd to add some verefication field (disable save button)-->
-
-          <script>
-            $(document).ready(function (e) {
-              $("#topic").on("input", async function (e) {
-                inputData = $("#topic").val();
-                const url = "/topicSearch";
-
-                try {
-                  response = await fetch(url, {
-                    method: "POST",
-                    body: JSON.stringify(inputData),
-                    credentials: "include",
-                    headers: { "Content-Type": "application/json" },
-                  });
-                  json = await response.json();
-                  console.log("Success:", json);
-                } catch (error) {
-                  console.error("Error:", error);
-                }
-              });
-            });
-          </script>
-          <button type="submit" class="btn btn-primary form-control">
-            Add
-          </button>
-        </form>
-      </div>
-    </div>
-  </div>
-</div>
 <hr />
 <h3>Public topics:</h3>
 
+<!-- Include Modal for add topics button-->
+{% include '_topic_search.html'%}
+
+<script src="/static/js/topic_search.js" charset="utf-8"></script>
 {% endblock %}

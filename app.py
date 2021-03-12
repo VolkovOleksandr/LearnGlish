@@ -4,6 +4,7 @@ from flask_session import Session
 from sqlalchemy.exc import IntegrityError
 from werkzeug.exceptions import default_exceptions, HTTPException, InternalServerError
 from werkzeug.security import check_password_hash, generate_password_hash
+from flask_marshmallow import Marshmallow
 
 from helpers import apology, login_required, checkUserInfo
 from models.user import Users, topic_identifier
@@ -17,6 +18,8 @@ app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///learnglish.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db.init_app(app)
+ma = Marshmallow(app)
+
 # Creare db
 with app.app_context():
     db.create_all()
@@ -39,6 +42,12 @@ app.config["SESSION_FILE_DIR"] = mkdtemp()
 app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
+
+
+class TopicSchema(ma.Schema):
+    class Meta:
+        model: Topics
+        fields = ("topic",)
 
 
 @app.route("/")
@@ -67,9 +76,13 @@ def addNewTopic():
 @app.route("/topicSearch", methods=["POST"])
 @login_required
 def topicSearch():
+    topic_schema = TopicSchema(many=True)
     data = request.get_json()
-    print(data)
-    return jsonify(data)
+    search = "%{}%".format(data)
+    topics = Topics.query.filter(Topics.topic.like(search)).all()
+    output = topic_schema.dump(topics)
+    print(output)
+    return jsonify(output)
 
 
 @app.route("/login", methods=["GET", "POST"])

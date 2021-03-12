@@ -4,21 +4,22 @@ from flask_session import Session
 from sqlalchemy.exc import IntegrityError
 from werkzeug.exceptions import default_exceptions, HTTPException, InternalServerError
 from werkzeug.security import check_password_hash, generate_password_hash
-from flask_marshmallow import Marshmallow
 
 from helpers import apology, login_required, checkUserInfo
 from models.user import Users, topic_identifier
 from models.topic import Topics
 from models.vocabulary import Vocabularys
 from models.progress import Progress
+from models.topicSchema import TopicSchema
 from models.db import db
+from models.ma import ma
 
 # Configure application
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///learnglish.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db.init_app(app)
-ma = Marshmallow(app)
+ma.init_app(app)
 
 # Creare db
 with app.app_context():
@@ -44,12 +45,6 @@ app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
 
 
-class TopicSchema(ma.Schema):
-    class Meta:
-        model: Topics
-        fields = ("topic",)
-
-
 @app.route("/")
 def index():
 
@@ -70,19 +65,22 @@ def addNewTopic():
     flash('You were successfully add new topick')
     return redirect("/topics")
 
-# TODO rewrite search to check if topick already exist
+# TODO Check if topick already exist or create new one
 
 
 @app.route("/topicSearch", methods=["POST"])
 @login_required
 def topicSearch():
+    # Creare schema for Topic
     topic_schema = TopicSchema(many=True)
-    data = request.get_json()
-    search = "%{}%".format(data)
-    topics = Topics.query.filter(Topics.topic.like(search)).all()
-    output = topic_schema.dump(topics)
-    print(output)
-    return jsonify(output)
+    # Get data from user form
+    dataFromForm = request.get_json()
+    searchQueryLike = "%{}%".format(dataFromForm)
+    # Query data from DB
+    topics = Topics.query.filter(Topics.topic.like(searchQueryLike)).all()
+    jsonTopics = topic_schema.dump(topics)
+    # Return data to datalist for user
+    return jsonify(jsonTopics)
 
 
 @app.route("/login", methods=["GET", "POST"])

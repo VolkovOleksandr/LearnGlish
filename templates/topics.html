@@ -20,7 +20,11 @@
     </div>
   </div>
 </div>
-
+<div>
+  {% for topic in userTopics %}
+  <p>{{ topic.topic}}</p>
+  {% endfor %}
+</div>
 <hr />
 <h3>Public topics:</h3>
 

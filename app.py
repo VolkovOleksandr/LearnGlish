@@ -54,7 +54,16 @@ def index():
 @app.route("/topics")
 @login_required
 def topics():
-    return render_template("topics.html")
+    # Creare schema for Topic
+    topic_schema = TopicSchema(many=True)
+    user = Users.query.get(session["user_id"])
+    # Get all topics from DB
+    topics = Topics.query.join(topic_identifier).join(Users).filter(
+        (topic_identifier.c.user_id == user.id)).all()
+
+    jsonTopics = topic_schema.dump(topics)
+    # Return data to html
+    return render_template("topics.html", userTopics=jsonTopics)
 
 
 @app.route("/topics/add", methods=["POST"])

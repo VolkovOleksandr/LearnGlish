@@ -5,4 +5,4 @@ from models.topic import Topics
 class TopicSchema(ma.Schema):
     class Meta:
         model: Topics
-        fields = ("topic",)
+        fields = ("topic", "id")

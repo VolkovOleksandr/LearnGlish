@@ -51,6 +51,12 @@ def index():
     return render_template("index.html")
 
 
+@app.route("/study/<string:topic_id>")
+def stady(topic_id):
+    print(topic_id)
+    return "topicId: OK"
+
+
 @app.route("/topics")
 @login_required
 def topics():
@@ -62,6 +68,7 @@ def topics():
         (topic_identifier.c.user_id == user.id)).all()
 
     jsonTopics = topic_schema.dump(topics)
+    # TODO Pagination and each group-list should be limited by 10
     # Return data to html
     return render_template("topics.html", userTopics=jsonTopics)
 

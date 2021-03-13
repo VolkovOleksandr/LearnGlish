@@ -52,9 +52,24 @@ def index():
 
 
 @app.route("/study/<string:topic_id>")
+@login_required
 def stady(topic_id):
+    topicTitle = Topics.query.get(topic_id)
 
-    return render_template("study.html", topic=topic_id)
+    return render_template("study.html", topicTitle=topicTitle)
+
+
+@app.route("/study/topic/edit", methods=["POST"])
+def editTopic():
+    # Get gata from user
+    topicId = request.form["topicId"]
+    topicTitle = request.form["topicEdit"]
+    # Get data from DB and make changes
+    topicDB = Topics.query.get(topicId)
+    topicDB.topic = topicTitle
+    db.session.commit()
+    flash("Topick successfully changed")
+    return redirect("/study/{}".format(topicId))
 
 
 @app.route("/topics")

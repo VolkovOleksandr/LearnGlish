@@ -2,14 +2,14 @@
 %}
 <!-- Topic block -->
 <div class="row justify-content-center" id="topickBlock">
-  <div class="col-6"><h3>Topic</h3></div>
+  <div class="col-6"><h3>{{ topicTitle.topic}}</h3></div>
   <div class="col-6">
     <div class="d-flex justify-content-end">
       <button
         type="button"
         class="btn btn-info"
         data-toggle="modal"
-        data-target="#exampleModalCenter"
+        data-target="#topicModalEdit"
       >
         Edit
       </button>
@@ -97,4 +97,6 @@
     </tbody>
   </table>
 </div>
-{% endblock %}
+
+<!-- Include Modals -->
+{% include '_topic_edit.html'%} {% endblock %}

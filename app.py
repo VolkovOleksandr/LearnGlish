@@ -53,8 +53,8 @@ def index():
 
 @app.route("/study/<string:topic_id>")
 def stady(topic_id):
-    print(topic_id)
-    return "topicId: OK"
+
+    return render_template("study.html", topic=topic_id)
 
 
 @app.route("/topics")

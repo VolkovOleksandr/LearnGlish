@@ -1,0 +1,100 @@
+{% extends "layout.html" %} {% block title %} Login {% endblock %} {% block main
+%}
+<!-- Topic block -->
+<div class="row justify-content-center" id="topickBlock">
+  <div class="col-6"><h3>Topic</h3></div>
+  <div class="col-6">
+    <div class="d-flex justify-content-end">
+      <button
+        type="button"
+        class="btn btn-info"
+        data-toggle="modal"
+        data-target="#exampleModalCenter"
+      >
+        Edit
+      </button>
+      <div class="d-flex justify-content-end">
+        <button
+          type="button"
+          class="btn btn-danger ml-3"
+          data-toggle="modal"
+          data-target="#exampleModalCenter"
+        >
+          Drop
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Buttopn block -->
+<div class="row justify-content-around mt-4" id="buttonBlock">
+  <div class="col-4 d-flex justify-content-center">
+    <button
+      type="button"
+      class="btn btn-primary"
+      data-toggle="modal"
+      data-target="#exampleModalCenter"
+    >
+      New word
+    </button>
+  </div>
+  <div class="col-4 d-flex justify-content-center">
+    <button
+      type="button"
+      class="btn btn-primary"
+      data-toggle="modal"
+      data-target="#exampleModalCenter"
+    >
+      New Phrase
+    </button>
+  </div>
+  <div class="col-4 d-flex justify-content-center">
+    <button
+      type="button"
+      class="btn btn-primary"
+      data-toggle="modal"
+      data-target="#exampleModalCenter"
+    >
+      Quizze
+    </button>
+  </div>
+</div>
+
+<!-- Statistics block -->
+<div class="row justify-content-center mt-4" id="statisticsBlock">
+  <h3>Some statistics are coming</h3>
+  <p>
+    Lorem ipsum dolor sit amet consectetur adipisicing elit. Unde doloribus
+    maiores nostrum perferendis. Rerum natus eos deleniti sapiente quae,
+    consequuntur accusantium adipisci veritatis omnis tenetur autem molestiae
+    alias tempora. Consequuntur placeat amet quibusdam, soluta culpa libero
+    aspernatur, laborum nisi, quo dolor necessitatibus magni similique assumenda
+    in et nostrum ipsa maxime!
+  </p>
+</div>
+
+<!-- Recently added block -->
+<div class="row justify-content-center mt-4" id="recentlyBlock">
+  <h3>Recently added</h3>
+  <table class="table table-hover">
+    <thead>
+      <tr class="row justify-content-center">
+        <th class="col-5">Origin</th>
+        <th class="col-5">Translate</th>
+        <th class="col-2">Edit/Delete</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr class="row justify-content-center">
+        <th class="col-5">Hello</th>
+        <th class="col-5">Priver</th>
+        <th class="col-2 d-flex justify-content-around">
+          <button type="button" class="btn btn-info">Edit</button>
+          <button type="button" class="btn btn-danger">Drop</button>
+        </th>
+      </tr>
+    </tbody>
+  </table>
+</div>
+{% endblock %}

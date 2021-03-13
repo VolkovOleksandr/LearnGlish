@@ -60,12 +60,26 @@ def topics():
 @app.route("/topics/add", methods=["POST"])
 @login_required
 def addNewTopic():
-    topic = request.form["topic"]
-    print(topic)
-    flash('You were successfully add new topick')
-    return redirect("/topics")
-
-# TODO Check if topick already exist or create new one
+    topicInput = request.form["topic"]
+    # Get user and check if topick in DB
+    currentUser = Users.query.get(session["user_id"])
+    topicId = Topics.query.filter_by(topic=topicInput).first()
+    if topicId:
+        # If topic already in DB just append to current user topic_id
+        currentUser.topics.append(Topics.query.get(topicId.id))
+        db.session.add(currentUser)
+        db.session.commit()
+        flash('You were successfully add topick')
+        return redirect("/topics")
+    else:
+        # If not create new topic
+        newTopic = Topics(topic=topicInput)
+        db.session.add(newTopic)
+        currentUser.topics.append(newTopic)
+        db.session.add(currentUser)
+        db.session.commit()
+        flash('You were successfully add new topick')
+        return redirect("/topics")
 
 
 @app.route("/topicSearch", methods=["POST"])

@@ -59,6 +59,27 @@ def stady(topic_id):
     return render_template("study.html", topicTitle=topicTitle)
 
 
+@app.route("/study/word/add", methods=["POST"])
+@login_required
+def addWord():
+    # Get gata from user
+    topicId = request.form["topicId"]
+    originWord = request.form["wordOrigin"]
+    translateWord = request.form["wordTranslate"]
+    userId = session["user_id"]
+    # Chec if all fields are entered
+    if not originWord or not translateWord:
+        flash("Origin word or translate not entered. Please try again")
+        return redirect("/study/{}".format(topicId))
+    # Add word to DB
+    newWord = Vocabularys(user_id=userId, topic_id=topicId,
+                          type="word", origin=originWord, translate=translateWord)
+    db.session.add(newWord)
+    db.session.commit()
+    flash("Word successfully added")
+    return redirect("/study/{}".format(topicId))
+
+
 @app.route("/study/topic/edit", methods=["POST"])
 @login_required
 def editTopic():

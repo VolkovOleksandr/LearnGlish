@@ -60,6 +60,7 @@ def stady(topic_id):
 
 
 @app.route("/study/topic/edit", methods=["POST"])
+@login_required
 def editTopic():
     # Get gata from user
     topicId = request.form["topicId"]
@@ -70,6 +71,19 @@ def editTopic():
     db.session.commit()
     flash("Topick successfully changed")
     return redirect("/study/{}".format(topicId))
+
+
+@app.route("/study/topic/delete", methods=["POST"])
+@login_required
+def deleteTopic():
+    # Get gata from user
+    topicId = request.form["topicId"]
+    # Get data from DB and delete
+    topicDB = Topics.query.get(topicId)
+    db.session.delete(topicDB)
+    db.session.commit()
+    flash("Topick successfully deleted")
+    return redirect("/topics")
 
 
 @app.route("/topics")

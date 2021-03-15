@@ -2,6 +2,7 @@ from tempfile import mkdtemp
 from flask import Flask, flash, redirect, render_template, request, session, jsonify
 from flask_session import Session
 from sqlalchemy.exc import IntegrityError
+from sqlalchemy import and_
 from werkzeug.exceptions import default_exceptions, HTTPException, InternalServerError
 from werkzeug.security import check_password_hash, generate_password_hash
 
@@ -11,6 +12,7 @@ from models.topic import Topics
 from models.vocabulary import Vocabularys
 from models.progress import Progress
 from models.topicSchema import TopicSchema
+from models.vocabularySchema import VocabularySchema
 from models.db import db
 from models.ma import ma
 
@@ -53,10 +55,14 @@ def index():
 
 @app.route("/study/<string:topic_id>")
 @login_required
-def stady(topic_id):
+def study(topic_id):
     topicTitle = Topics.query.get(topic_id)
-
-    return render_template("study.html", topicTitle=topicTitle)
+    userId = session["user_id"]
+    vocab_schema = VocabularySchema(many=True)
+    vocabs = Vocabularys.query.filter(and_(
+        Vocabularys.user_id == userId, Vocabularys.topic_id == topic_id)).all()
+    jsonVocabs = vocab_schema.dump(vocabs)
+    return render_template("study.html", topicTitle=topicTitle, vocabs=vocabs)
 
 
 @app.route("/study/word/add", methods=["POST"])
@@ -80,31 +86,26 @@ def addWord():
     return redirect("/study/{}".format(topicId))
 
 
-@app.route("/study/topic/edit", methods=["POST"])
+@app.route("/study/word/edit", methods=["POST"])
 @login_required
-def editTopic():
+def editWord():
     # Get gata from user
     topicId = request.form["topicId"]
-    topicTitle = request.form["topicEdit"]
-    # Get data from DB and make changes
-    topicDB = Topics.query.get(topicId)
-    topicDB.topic = topicTitle
+    wordId = request.form["wordId"]
+    originWord = request.form["wordOrigin"]
+    translateWord = request.form["wordTranslate"]
+    userId = session["user_id"]
+    # Check if all fields are entered
+    if not originWord or not translateWord:
+        flash("Origin word or translate not entered. Please try again")
+        return redirect("/study/{}".format(topicId))
+    # Edit word in DB
+    vocab = Vocabularys.query.get(wordId)
+    vocab.origin = originWord
+    vocab.translate = translateWord
     db.session.commit()
-    flash("Topick successfully changed")
+    flash("Word successfully eddited")
     return redirect("/study/{}".format(topicId))
-
-
-@app.route("/study/topic/delete", methods=["POST"])
-@login_required
-def deleteTopic():
-    # Get gata from user
-    topicId = request.form["topicId"]
-    # Get data from DB and delete
-    topicDB = Topics.query.get(topicId)
-    db.session.delete(topicDB)
-    db.session.commit()
-    flash("Topick successfully deleted")
-    return redirect("/topics")
 
 
 @app.route("/topics")
@@ -148,6 +149,33 @@ def addNewTopic():
         return redirect("/topics")
 
 
+@app.route("/study/topic/edit", methods=["POST"])
+@login_required
+def editTopic():
+    # Get gata from user
+    topicId = request.form["topicId"]
+    topicTitle = request.form["topicEdit"]
+    # Get data from DB and make changes
+    topicDB = Topics.query.get(topicId)
+    topicDB.topic = topicTitle
+    db.session.commit()
+    flash("Topick successfully changed")
+    return redirect("/study/{}".format(topicId))
+
+
+@app.route("/study/topic/delete", methods=["POST"])
+@login_required
+def deleteTopic():
+    # Get gata from user
+    topicId = request.form["topicId"]
+    # Get data from DB and delete
+    topicDB = Topics.query.get(topicId)
+    db.session.delete(topicDB)
+    db.session.commit()
+    flash("Topick successfully deleted")
+    return redirect("/topics")
+
+
 @app.route("/topicSearch", methods=["POST"])
 @login_required
 def topicSearch():
@@ -161,6 +189,20 @@ def topicSearch():
     jsonTopics = topic_schema.dump(topics)
     # Return data to datalist for user
     return jsonify(jsonTopics)
+
+
+@app.route("/study/getWordById", methods=["POST"])
+@login_required
+def getWordById():
+    # Creare schema for Vocabulary
+    vocab_schema = VocabularySchema()
+    # Get data from user form
+    dataFromForm = request.get_json()
+    # Query data from DB
+    vocab = Vocabularys.query.get(dataFromForm)
+    jsonVocab = vocab_schema.dump(vocab)
+    # Return data to datalist for user
+    return jsonify(jsonVocab)
 
 
 @app.route("/login", methods=["GET", "POST"])

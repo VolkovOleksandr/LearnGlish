@@ -86,18 +86,32 @@
       </tr>
     </thead>
     <tbody>
+      {% for vocab in vocabs %}
       <tr class="row justify-content-center">
-        <th class="col-5">Hello</th>
-        <th class="col-5">Priver</th>
+        <th class="col-5">{{ vocab.origin}}</th>
+        <th class="col-5">{{ vocab.translate}}</th>
         <th class="col-2 d-flex justify-content-around">
-          <button type="button" class="btn btn-info">Edit</button>
+          <button
+            type="button"
+            class="btn btn-primary"
+            data-toggle="modal"
+            name="editWord"
+            value="{{ vocab.id}}"
+            data-target="#vocabModalEditWord"
+          >
+            Edit
+          </button>
+          <!-- TODO drop the word -->
           <button type="button" class="btn btn-danger">Drop</button>
         </th>
       </tr>
+      {% endfor%}
     </tbody>
   </table>
 </div>
 
+<!-- Include JS -->
+<script src="/static/js/word_edit.js" charset="utf-8"></script>
 <!-- Include Modals -->
 {% include '_topic_edit.html'%} {% include '_topic_delete.html'%} {% include
-'_vocab_add_word.html'%} {% endblock %}
+'_vocab_add_word.html'%} {% include '_vocab_edit_word.html'%} {% endblock %}

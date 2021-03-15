@@ -101,8 +101,16 @@
           >
             Edit
           </button>
-          <!-- TODO drop the word -->
-          <button type="button" class="btn btn-danger">Drop</button>
+          <button
+            type="button"
+            class="btn btn-danger"
+            data-toggle="modal"
+            name="deleteWord"
+            value="{{ vocab.id}}"
+            data-target="#vocabModalDeleteWord"
+          >
+            Drop
+          </button>
         </th>
       </tr>
       {% endfor%}
@@ -112,6 +120,8 @@
 
 <!-- Include JS -->
 <script src="/static/js/word_edit.js" charset="utf-8"></script>
+<script src="/static/js/word_delete.js" charset="utf-8"></script>
 <!-- Include Modals -->
 {% include '_topic_edit.html'%} {% include '_topic_delete.html'%} {% include
-'_vocab_add_word.html'%} {% include '_vocab_edit_word.html'%} {% endblock %}
+'_vocab_add_word.html'%} {% include '_vocab_edit_word.html'%} {% include
+'_vocab_delete_word.html' %} {% endblock %}

@@ -108,6 +108,18 @@ def editWord():
     return redirect("/study/{}".format(topicId))
 
 
+@app.route("/study/word/delete", methods=["POST"])
+@login_required
+def deleteWord():
+    topicId = request.form["topicId"]
+    wordId = request.form["deleteId"]
+    wordDB = Vocabularys.query.get(wordId)
+    db.session.delete(wordDB)
+    db.session.commit()
+    flash("Word successfully deleted")
+    return redirect("/study/{}".format(topicId))
+
+
 @app.route("/topics")
 @login_required
 def topics():

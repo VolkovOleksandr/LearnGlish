@@ -1,7 +1,7 @@
-<!-- Modal Edit word-->
+<!-- Modal Edit phrase-->
 <div
   class="modal fade"
-  id="vocabModalEditWord"
+  id="vocabModalEditPhrase"
   tabindex="-1"
   role="dialog"
   aria-labelledby="exampleModalCenterTitle"
@@ -10,7 +10,7 @@
   <div class="modal-dialog modal-dialog-centered" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLongTitle">Edit word</h5>
+        <h5 class="modal-title" id="exampleModalLongTitle">Edit phrase</h5>
         <button
           type="button"
           class="close"
@@ -21,25 +21,25 @@
         </button>
       </div>
       <div class="modal-body">
-        <form action="/study/word/edit" method="post">
+        <form action="/study/phrase/edit" method="post">
           <div class="form-group">
-            <input type="hidden" id="wordId" name="wordId" />
+            <input type="hidden" id="phraseId" name="phraseId" />
             <input type="hidden" name="topicId" value="{{ topicTitle.id}}" />
-            <label for="wordOrigin">Origin word: </label>
+            <label for="phraseOrigin">Origin phrase: </label>
             <input
               class="form-control mb-3"
               autocomplete="off"
-              name="wordOrigin"
-              id="wordOrigin"
-              placeholder="Apple, cat, books, ets..."
+              name="phraseOrigin"
+              id="phraseOrigin"
+              placeholder="Apple is mine!"
             />
-            <label for="wordTranslate">Translate word: </label>
+            <label for="phraseTranslate">Translate phrase: </label>
             <input
               class="form-control mb-3"
               autocomplete="off"
-              name="wordTranslate"
-              id="wordTranslate"
-              placeholder="Яблоко, кот, книги ..."
+              name="phraseTranslate"
+              id="phraseTranslate"
+              placeholder="Яблоко мойо"
             />
           </div>
           <div class="row justify-content-around">

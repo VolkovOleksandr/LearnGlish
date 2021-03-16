@@ -91,6 +91,28 @@ def addPhrase():
     return redirect("/study/{}".format(topicId))
 
 
+@app.route("/study/phrase/edit", methods=["POST"])
+@login_required
+def editPhrase():
+    # Get gata from user
+    topicId = request.form["topicId"]
+    phraseId = request.form["phraseId"]
+    originPhrase = request.form["phraseOrigin"]
+    translatePhrase = request.form["phraseTranslate"]
+    userId = session["user_id"]
+    # Check if all fields are entered
+    if not originPhrase or not translatePhrase:
+        flash("Origin phrase or translate not entered. Please try again")
+        return redirect("/study/{}".format(topicId))
+    # Edit word in DB
+    vocabPh = Vocabularys.query.get(phraseId)
+    vocabPh.origin = originPhrase
+    vocabPh.translate = translatePhrase
+    db.session.commit()
+    flash("Phrase successfully eddited")
+    return redirect("/study/{}".format(topicId))
+
+
 @app.route("/study/word/add", methods=["POST"])
 @login_required
 def addWord():

@@ -113,6 +113,18 @@ def editPhrase():
     return redirect("/study/{}".format(topicId))
 
 
+@app.route("/study/phrase/delete", methods=["POST"])
+@login_required
+def deletePhrase():
+    topicId = request.form["topicId"]
+    phraseId = request.form["deleteId"]
+    phraseDB = Vocabularys.query.get(phraseId)
+    db.session.delete(phraseDB)
+    db.session.commit()
+    flash("Phrase successfully deleted")
+    return redirect("/study/{}".format(topicId))
+
+
 @app.route("/study/word/add", methods=["POST"])
 @login_required
 def addWord():

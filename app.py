@@ -59,10 +59,36 @@ def study(topic_id):
     topicTitle = Topics.query.get(topic_id)
     userId = session["user_id"]
     vocab_schema = VocabularySchema(many=True)
-    vocabs = Vocabularys.query.filter(and_(
-        Vocabularys.user_id == userId, Vocabularys.topic_id == topic_id)).all()
-    jsonVocabs = vocab_schema.dump(vocabs)
-    return render_template("study.html", topicTitle=topicTitle, vocabs=vocabs)
+    # Get all words from DB by filter
+    vocabsWord = Vocabularys.query.filter(and_(
+        Vocabularys.user_id == userId, Vocabularys.topic_id == topic_id, Vocabularys.type == "word")).all()
+    jsonVocabsWord = vocab_schema.dump(vocabsWord)
+    # Get all Phrases from DB by filter
+    vocabsPhrases = Vocabularys.query.filter(and_(
+        Vocabularys.user_id == userId, Vocabularys.topic_id == topic_id, Vocabularys.type == "phrase")).all()
+    jsonVocabsPhrases = vocab_schema.dump(vocabsPhrases)
+    return render_template("study.html", topicTitle=topicTitle, vocabs=jsonVocabsWord, vocabsPh=jsonVocabsPhrases)
+
+
+@app.route("/study/phrase/add", methods=["POST"])
+@login_required
+def addPhrase():
+    # Get gata from user
+    topicId = request.form["topicId"]
+    originPhrase = request.form["phraseOrigin"]
+    translatePhrase = request.form["phraseTranslate"]
+    userId = session["user_id"]
+    # Check if all fields are entered
+    if not originPhrase or not translatePhrase:
+        flash("Origin phrase or translate not entered. Please try again")
+        return redirect("/study/{}".format(topicId))
+    # Add hprase to DB
+    newPH = Vocabularys(user_id=userId, topic_id=topicId,
+                        type="phrase", origin=originPhrase, translate=translatePhrase)
+    db.session.add(newPH)
+    db.session.commit()
+    flash("Phrase successfully added")
+    return redirect("/study/{}".format(topicId))
 
 
 @app.route("/study/word/add", methods=["POST"])
@@ -73,7 +99,7 @@ def addWord():
     originWord = request.form["wordOrigin"]
     translateWord = request.form["wordTranslate"]
     userId = session["user_id"]
-    # Chec if all fields are entered
+    # Check if all fields are entered
     if not originWord or not translateWord:
         flash("Origin word or translate not entered. Please try again")
         return redirect("/study/{}".format(topicId))

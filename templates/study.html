@@ -44,7 +44,7 @@
       type="button"
       class="btn btn-primary"
       data-toggle="modal"
-      data-target="#exampleModalCenter"
+      data-target="#vocabModalAddPhrase"
     >
       New Phrase
     </button>
@@ -75,47 +75,44 @@
 </div>
 
 <!-- Recently added block -->
-<div class="row justify-content-center mt-4" id="recentlyBlock">
-  <h3>Recently added</h3>
-  <table class="table table-hover">
-    <thead>
-      <tr class="row justify-content-center">
-        <th class="col-5">Origin</th>
-        <th class="col-5">Translate</th>
-        <th class="col-2">Edit/Delete</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for vocab in vocabs %}
-      <tr class="row justify-content-center">
-        <th class="col-5">{{ vocab.origin}}</th>
-        <th class="col-5">{{ vocab.translate}}</th>
-        <th class="col-2 d-flex justify-content-around">
-          <button
-            type="button"
-            class="btn btn-primary"
-            data-toggle="modal"
-            name="editWord"
-            value="{{ vocab.id}}"
-            data-target="#vocabModalEditWord"
-          >
-            Edit
-          </button>
-          <button
-            type="button"
-            class="btn btn-danger"
-            data-toggle="modal"
-            name="deleteWord"
-            value="{{ vocab.id}}"
-            data-target="#vocabModalDeleteWord"
-          >
-            Drop
-          </button>
-        </th>
-      </tr>
-      {% endfor%}
-    </tbody>
-  </table>
+<div class="row justify-content-center inline-block mt-4" id="recentlyBlock">
+  <div class="row justify-content-center">
+    <div class="col-12 mb-3">
+      <h3>Recently added</h3>
+    </div>
+  </div>
+
+  <div class="word-block col-12">
+    <ul class="nav nav-tabs" id="wordTab" role="tablist">
+      <li class="nav-item col-6" role="presentation">
+        <a
+          class="nav-link active"
+          id="word-tab"
+          data-toggle="tab"
+          href="#words"
+          role="tab"
+          aria-controls="words"
+          aria-selected="true"
+          >My Words</a
+        >
+      </li>
+      <li class="nav-item col-6" role="presentation">
+        <a
+          class="nav-link"
+          id="phrases-tab"
+          data-toggle="tab"
+          href="#phrases"
+          role="tab"
+          aria-controls="phrases"
+          aria-selected="false"
+          >My Phrases</a
+        >
+      </li>
+    </ul>
+    <div class="tab-content" id="vocabsTabContent">
+      {% include '_tableForWordAndPhrases.html'%}
+    </div>
+  </div>
 </div>
 
 <!-- Include JS -->
@@ -124,4 +121,5 @@
 <!-- Include Modals -->
 {% include '_topic_edit.html'%} {% include '_topic_delete.html'%} {% include
 '_vocab_add_word.html'%} {% include '_vocab_edit_word.html'%} {% include
-'_vocab_delete_word.html' %} {% endblock %}
+'_vocab_delete_word.html' %} {% include '_vocab_add_phrase.html'%} {% endblock
+%}

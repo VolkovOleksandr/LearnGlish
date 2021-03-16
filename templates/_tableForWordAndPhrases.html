@@ -1,0 +1,94 @@
+<!-- Words -->
+<div
+  class="tab-pane fade show active"
+  id="words"
+  role="tabpanel"
+  aria-labelledby="word-tab"
+>
+  <table class="table table-hover">
+    <thead>
+      <tr class="row justify-content-center">
+        <th class="col-5">Origin</th>
+        <th class="col-5">Translate</th>
+        <th class="col-2">Edit/Delete</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for vocab in vocabs %}
+      <tr class="row justify-content-center">
+        <th class="col-5">{{ vocab.origin}}</th>
+        <th class="col-5">{{ vocab.translate}}</th>
+        <th class="col-2 d-flex justify-content-around">
+          <button
+            type="button"
+            class="btn btn-primary"
+            data-toggle="modal"
+            name="editWord"
+            value="{{ vocab.id}}"
+            data-target="#vocabModalEditWord"
+          >
+            Edit
+          </button>
+          <button
+            type="button"
+            class="btn btn-danger"
+            data-toggle="modal"
+            name="deleteWord"
+            value="{{ vocab.id}}"
+            data-target="#vocabModalDeleteWord"
+          >
+            Drop
+          </button>
+        </th>
+      </tr>
+      {% endfor%}
+    </tbody>
+  </table>
+</div>
+<!-- Phrases -->
+<div
+  class="tab-pane fade"
+  id="phrases"
+  role="tabpanel"
+  aria-labelledby="phrases-tab"
+>
+  <table class="table table-hover">
+    <thead>
+      <tr class="row justify-content-center">
+        <th class="col-5">Origin</th>
+        <th class="col-5">Translate</th>
+        <th class="col-2">Edit/Delete</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for vocabPh in vocabsPh %}
+      <tr class="row justify-content-center">
+        <th class="col-5">{{ vocabPh.origin}}</th>
+        <th class="col-5">{{ vocabPh.translate}}</th>
+        <th class="col-2 d-flex justify-content-around">
+          <button
+            type="button"
+            class="btn btn-primary"
+            data-toggle="modal"
+            name="editWord"
+            value="{{ vocabPh.id}}"
+            data-target="#vocabModalEditWord"
+          >
+            Edit
+          </button>
+          <button
+            type="button"
+            class="btn btn-danger"
+            data-toggle="modal"
+            name="deleteWord"
+            value="{{ vocabPh.id}}"
+            data-target="#vocabModalDeleteWord"
+          >
+            Drop
+          </button>
+        </th>
+      </tr>
+      {% endfor%}
+    </tbody>
+  </table>
+</div>

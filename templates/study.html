@@ -50,14 +50,10 @@
     </button>
   </div>
   <div class="col-4 d-flex justify-content-center">
-    <button
-      type="button"
-      class="btn btn-primary"
-      data-toggle="modal"
-      data-target="#exampleModalCenter"
-    >
-      Quizze
-    </button>
+    <form action="/study/startQuiz" method="POST">
+      <input type="hidden" value="{{topicTitle.id}}" name="topicId" />
+      <button type="submit" class="btn btn-primary">Quiz</button>
+    </form>
   </div>
 </div>
 

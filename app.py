@@ -53,6 +53,32 @@ def index():
     return render_template("index.html")
 
 
+@app.route("/study/startQuiz", methods=["POST"])
+@login_required
+def startQuiz():
+    topicId = request.form["topicId"]
+    return redirect("/study/quiz/{}".format(topicId))
+
+
+@app.route("/study/quiz/<string:topicId>", methods=["GET", "POST"])
+@login_required
+def quiz(topicId):
+    if request.method == "GET":
+        # TODO Generate quiz for user based on users data: 1 word - 4 answer
+        # TODO Get random 3 answers from DB
+        return render_template("topic_quiz.html", topic_id=topicId)
+    else:
+        # TODO Check submited form, pass or fail
+        # TODO Save answer to user statistics
+        # TODO Go to new smalQuiz
+        userAnswer = request.form.get("answer")
+        if userAnswer == None:
+            print("NOT selected")
+        else:
+            print(userAnswer)
+        return redirect("/study/quiz/{}".format(topicId))
+
+
 @app.route("/study/<string:topic_id>")
 @login_required
 def study(topic_id):

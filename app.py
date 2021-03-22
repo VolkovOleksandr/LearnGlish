@@ -1,10 +1,11 @@
 from tempfile import mkdtemp
-from flask import Flask, flash, redirect, render_template, request, session, jsonify
+from flask import Flask, flash, json, redirect, render_template, request, session, jsonify
 from flask_session import Session
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy import and_
 from werkzeug.exceptions import default_exceptions, HTTPException, InternalServerError
 from werkzeug.security import check_password_hash, generate_password_hash
+import random
 
 from helpers import apology, login_required, checkUserInfo
 from models.user import Users, topic_identifier
@@ -13,6 +14,7 @@ from models.vocabulary import Vocabularys
 from models.progress import Progress
 from models.topicSchema import TopicSchema
 from models.vocabularySchema import VocabularySchema
+from models.progressSchema import ProgressSchema
 from models.db import db
 from models.ma import ma
 
@@ -63,20 +65,80 @@ def startQuiz():
 @app.route("/study/quiz/<string:topicId>", methods=["GET", "POST"])
 @login_required
 def quiz(topicId):
+    # Get topic name
+    topicName = Topics.query.get(topicId)
+    userId = session["user_id"]
     if request.method == "GET":
         # TODO Generate quiz for user based on users data: 1 word - 4 answer
         # TODO Get random 3 answers from DB
-        return render_template("topic_quiz.html", topic_id=topicId)
-    else:
-        # TODO Check submited form, pass or fail
-        # TODO Save answer to user statistics
-        # TODO Go to new smalQuiz
-        userAnswer = request.form.get("answer")
-        if userAnswer == None:
-            print("NOT selected")
+
+        vocab_schema = VocabularySchema(many=True)
+        # Get all words from DB by filter
+        vocabWords = Vocabularys.query.filter(and_(
+            Vocabularys.user_id == userId, Vocabularys.topic_id == topicId)).all()
+        jsonVocabsWord = vocab_schema.dump(vocabWords)
+        # Check if User had word or phrases in DB
+        if len(jsonVocabsWord) == 0:
+            flash("No words or Phrases for quiz. First add some")
+            return redirect("/study/{}".format(topicId))
+        elif (len(jsonVocabsWord) < 4):
+            flash("No enough words or Phrases for quiz. First add more, at list 4")
+            return redirect("/study/{}".format(topicId))
+        # Ckeck user progress
+        progress_schema = ProgressSchema(many=True)
+        userProgress = Progress.query.filter(and_(
+            Progress.user_id == userId, Progress.topic_id == topicId)).all()
+        jsonUserProgress = progress_schema.dump(userProgress)
+        quizObj = {}
+        if len(jsonUserProgress) != 0:
+            # If user have some progress in current quiz get next quiz with Low attempt and success
+            print("NOT NULL")
         else:
-            print(userAnswer)
-        return redirect("/study/quiz/{}".format(topicId))
+            # Get random vocabulary for first quiz in topic
+            randomObj = jsonVocabsWord[random.randint(
+                0, len(jsonVocabsWord)-1)]
+            quizObj["question"] = randomObj["origin"]
+            quizObj["tryId"] = randomObj["id"]
+            quizObj["answers"] = [randomObj["translate"]]
+            while len(quizObj["answers"]) < 4:
+                randomAnswer = jsonVocabsWord[random.randint(
+                    0, len(jsonVocabsWord)-1)]
+                if randomAnswer["id"] != quizObj["tryId"] and randomAnswer["translate"] not in quizObj["answers"]:
+                    quizObj["answers"].append(randomAnswer["translate"])
+        return render_template("topic_quiz.html", topic_id=topicId, topic_name=topicName.topic, quiz_Obj=quizObj)
+    else:
+        userAnswer = request.form.get("answer")
+        tryId = request.form.get("tryId")
+        if userAnswer == None:
+            flash("Please select answer")
+            return redirect("/study/quiz/{}".format(topicId))
+        else:
+            checkWord = Vocabularys.query.get(tryId)
+            checkProgress = Progress.query.filter(and_(
+                Progress.user_id == userId, Progress.topic_id == topicId, Progress.vocabulary_id == tryId)).first()
+            print(userAnswer, tryId, checkProgress)
+            # Check if user don't have the word in progress then add one
+            if checkProgress == None:
+                progress = Progress(
+                    user_id=userId, topic_id=topicId, vocabulary_id=tryId, attempts=0, success=0)
+                db.session.add(progress)
+                db.session.commit()
+            # Checking answer
+            if userAnswer != checkWord.translate:
+                userProgress = Progress.query.filter(and_(
+                    Progress.user_id == userId, Progress.topic_id == topicId, Progress.vocabulary_id == tryId)).first()
+                userProgress.attempts += 1
+                db.session.commit()
+                flash("Previous answer was wrong. Let try another one")
+                return redirect("/study/quiz/{}".format(topicId))
+            else:
+                userProgress = Progress.query.filter(and_(
+                    Progress.user_id == userId, Progress.topic_id == topicId, Progress.vocabulary_id == tryId)).first()
+                userProgress.attempts += 1
+                userProgress.success += 1
+                db.session.commit()
+                flash("Congratulation! Previos answer was correct")
+                return redirect("/study/quiz/{}".format(topicId))
 
 
 @app.route("/study/<string:topic_id>")

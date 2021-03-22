@@ -11,7 +11,7 @@ class Progress(db.Model):
     last_repeat = db.Column(db.DateTime, nullable=False,
                             default=datetime.utcnow)
     attempts = db.Column(db.Integer, nullable=False, default=0)
-    sucsses = db.Column(db.Integer, nullable=False, default=0)
+    success = db.Column(db.Integer, nullable=False, default=0)
 
     # Create function to return String
 

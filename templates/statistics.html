@@ -1,0 +1,58 @@
+{% extends "layout.html" %} {% block title %} Login {% endblock %} {% block main
+%}
+<!-- <meta id="userStat" data-stats="{{userStat}}" /> -->
+
+<!-- Statistics diagram block -->
+<div class="row justify-content-center mt-4" id="statisticsDiagramBlock">
+  <h4 class="col-6 text-center">Word and Phrases in topic</h4>
+  <h4 class="col-6 text-center">Successfuly pased quiz and attempts</h4>
+  <!-- <div class="col-6 text-center">
+    <canvas id="myChart" width="150" height="50"></canvas>
+  </div>
+  <div class="col-6 text-center">
+    <canvas id="myChartRound" width="150" height="50"></canvas>
+  </div> -->
+</div>
+
+<!-- Tab block -->
+<div
+  class="row justify-content-center inline-block mt-4"
+  id="statisticsTabBlock"
+>
+  <div class="col-12">
+    <ul class="nav nav-tabs" id="progressTab" role="tablist">
+      <li class="nav-item col-6" role="presentation">
+        <a
+          class="nav-link active"
+          id="progress-tab"
+          data-toggle="tab"
+          href="#progress"
+          role="tab"
+          aria-controls="progress"
+          aria-selected="true"
+          >Study Progress</a
+        >
+      </li>
+      <li class="nav-item col-6" role="presentation">
+        <a
+          class="nav-link"
+          id="settings-tab"
+          data-toggle="tab"
+          href="#settings"
+          role="tab"
+          aria-controls="settings"
+          aria-selected="false"
+          >Settings</a
+        >
+      </li>
+    </ul>
+    <div class="tab-content" id="vocabsTabContent">
+      {% include '_tableForProgressAndSettings.html'%}
+    </div>
+  </div>
+</div>
+
+<!-- Include JS -->
+<!-- <script src="/static/js/word_edit.js" charset="utf-8"></script> -->
+<!-- Include Modals -->
+{% endblock %}

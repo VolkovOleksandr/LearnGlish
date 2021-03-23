@@ -55,6 +55,13 @@ def index():
     return render_template("index.html")
 
 
+@app.route("/statistics", methods=["GET", "POST"])
+@login_required
+def statistics():
+
+    return render_template("statistics.html")
+
+
 @app.route("/study/startQuiz", methods=["POST"])
 @login_required
 def startQuiz():

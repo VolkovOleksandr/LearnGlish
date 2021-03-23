@@ -1,4 +1,4 @@
-from tempfile import mkdtemp
+from tempfile import mkdtemp, tempdir
 from flask import Flask, flash, json, redirect, render_template, request, session, jsonify
 from flask_session import Session
 from sqlalchemy.exc import IntegrityError
@@ -180,7 +180,13 @@ def study(topic_id):
     vocabsPhrases = Vocabularys.query.filter(and_(
         Vocabularys.user_id == userId, Vocabularys.topic_id == topic_id, Vocabularys.type == "phrase")).all()
     jsonVocabsPhrases = vocab_schema.dump(vocabsPhrases)
-    return render_template("study.html", topicTitle=topicTitle, vocabs=jsonVocabsWord, vocabsPh=jsonVocabsPhrases)
+    # TODO Generate obj for statiscic from DB
+    temp = {
+        "wordAndPhrases": [1, 5],
+        "attemptsAndSuccess": [3, 1]
+    }
+    topicStatistic = json.dumps(temp)
+    return render_template("study.html", topicTitle=topicTitle, vocabs=jsonVocabsWord, vocabsPh=jsonVocabsPhrases, userStat=topicStatistic)
 
 
 @app.route("/study/phrase/add", methods=["POST"])

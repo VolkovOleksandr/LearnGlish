@@ -1,5 +1,6 @@
 {% extends "layout.html" %} {% block title %} Login {% endblock %} {% block main
 %}
+<meta id="userStat" data-stats="{{userStat}}" />
 <!-- Topic block -->
 <div class="row justify-content-center" id="topickBlock">
   <div class="col-6"><h3>{{ topicTitle.topic}}</h3></div>
@@ -59,15 +60,14 @@
 
 <!-- Statistics block -->
 <div class="row justify-content-center mt-4" id="statisticsBlock">
-  <h3>Some statistics are coming</h3>
-  <p>
-    Lorem ipsum dolor sit amet consectetur adipisicing elit. Unde doloribus
-    maiores nostrum perferendis. Rerum natus eos deleniti sapiente quae,
-    consequuntur accusantium adipisci veritatis omnis tenetur autem molestiae
-    alias tempora. Consequuntur placeat amet quibusdam, soluta culpa libero
-    aspernatur, laborum nisi, quo dolor necessitatibus magni similique assumenda
-    in et nostrum ipsa maxime!
-  </p>
+  <h4 class="col-6 text-center">Word and Phrases in topic</h4>
+  <h4 class="col-6 text-center">Successfuly pased quiz and attempts</h4>
+  <div class="col-6 text-center">
+    <canvas id="myChart" width="150" height="50"></canvas>
+  </div>
+  <div class="col-6 text-center">
+    <canvas id="myChartRound" width="150" height="50"></canvas>
+  </div>
 </div>
 
 <!-- Recently added block -->
@@ -116,6 +116,7 @@
 <script src="/static/js/word_delete.js" charset="utf-8"></script>
 <script src="/static/js/phrase_edit.js" charset="utf-8"></script>
 <script src="/static/js/phrase_delete.js" charset="utf-8"></script>
+<script src="/static/js/topic_statistics.js" charset="utf-8"></script>
 <!-- Include Modals -->
 {% include '_topic_edit.html'%} {% include '_topic_delete.html'%} {% include
 '_vocab_add_word.html'%} {% include '_vocab_edit_word.html'%} {% include

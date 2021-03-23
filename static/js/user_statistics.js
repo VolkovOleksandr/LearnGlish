@@ -1,9 +1,9 @@
-var ctx = document.getElementById("myChart").getContext("2d");
-var ctxr = document.getElementById("myChartRound").getContext("2d");
+var ctx = document.getElementById("vocabChart").getContext("2d");
+var ctxr = document.getElementById("progressChart").getContext("2d");
 // Chart configuration
 Chart.defaults.global.legend.display = false;
 // Get data from server
-var userStatsJson = $('#userStat').data("stats");
+var userStatsJson = $('#userTotalStat').data("stats");
 // First diadram for worda and phrases
 var myChart = new Chart(ctx, {
   type: "bar",
@@ -11,12 +11,12 @@ var myChart = new Chart(ctx, {
     labels: ["Word", "Phrases"],
     datasets: [
       {
-        data: userStatsJson.wordAndPhrases,
+        data: userStatsJson.totalWordsAndPhrases,
         backgroundColor: [
-          "rgba(54, 162, 235, 0.2)",
-          "rgba(255, 206, 86, 0.2)",
+            "rgba(255, 206, 86, 0.2)",
+            "rgba(54, 162, 235, 0.2)",
         ],
-        borderColor: ["rgba(54, 162, 235, 1)", "rgba(255, 206, 86, 1)"],
+        borderColor: [ "rgba(255, 206, 86, 1)", "rgba(54, 162, 235, 1)"],
         borderWidth: 1,
       },
     ],
@@ -41,10 +41,10 @@ var myChartRound = new Chart(ctxr, {
     labels: ["Attempts", "Success"],
     datasets: [
       {
-        data: userStatsJson.attemptsAndSuccess,
+        data: userStatsJson.totalAttemptsAndSuccess,
         backgroundColor: [
-          "rgba(153, 102, 255, 0.2)",
-          "rgba(75, 192, 192, 0.2)",
+            "rgba(153, 102, 255, 0.2)",
+            "rgba(75, 192, 192, 0.2)",
         ],
         borderColor: [ "rgba(153, 102, 255, 1)", "rgba(75, 192, 192, 1)"],
         borderWidth: 1,

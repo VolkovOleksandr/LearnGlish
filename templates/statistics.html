@@ -1,17 +1,17 @@
 {% extends "layout.html" %} {% block title %} Login {% endblock %} {% block main
 %}
-<!-- <meta id="userStat" data-stats="{{userStat}}" /> -->
+<meta id="userTotalStat" data-stats="{{userTotalStat}}" />
 
 <!-- Statistics diagram block -->
-<div class="row justify-content-center mt-4" id="statisticsDiagramBlock">
-  <h4 class="col-6 text-center">Word and Phrases in topic</h4>
-  <h4 class="col-6 text-center">Successfuly pased quiz and attempts</h4>
-  <!-- <div class="col-6 text-center">
-    <canvas id="myChart" width="150" height="50"></canvas>
+<div class="row justify-content-center" id="statisticsDiagramBlock">
+  <h4 class="col-6 text-center">Total amount Words and Phrases</h4>
+  <h4 class="col-6 text-center">Total amount pased quiz and attempts</h4>
+  <div class="col-6 text-center">
+    <canvas id="vocabChart" width="150" height="50"></canvas>
   </div>
   <div class="col-6 text-center">
-    <canvas id="myChartRound" width="150" height="50"></canvas>
-  </div> -->
+    <canvas id="progressChart" width="150" height="50"></canvas>
+  </div>
 </div>
 
 <!-- Tab block -->
@@ -53,6 +53,6 @@
 </div>
 
 <!-- Include JS -->
-<!-- <script src="/static/js/word_edit.js" charset="utf-8"></script> -->
+<script src="/static/js/user_statistics.js" charset="utf-8"></script>
 <!-- Include Modals -->
 {% endblock %}

@@ -56,10 +56,41 @@ def index():
 
 
 @app.route("/statistics", methods=["GET", "POST"])
-@login_required
+# @login_required
 def statistics():
+    userId = session["user_id"]
+    if request.method == "GET":
+        # Get data from Vocabulary and save to JSON object
+        userStats = {
+            "totalWordsAndPhrases": [],
+            "totalAttemptsAndSuccess": []
+        }
+        # DB query
+        vocabWords = Vocabularys.query.filter(and_(
+            Vocabularys.user_id == userId, Vocabularys.type == "word")).all()
+        vocabPhrases = Vocabularys.query.filter(and_(
+            Vocabularys.user_id == userId, Vocabularys.type == "phrase")).all()
+        userStats["totalWordsAndPhrases"].append(len(vocabWords))
+        userStats["totalWordsAndPhrases"].append(len(vocabPhrases))
+        # Count total amount of Attempts and success
+        progress_schema = ProgressSchema(many=True)
+        userProgress = Progress.query.filter(
+            Progress.user_id == userId).all()
+        userProgresJson = progress_schema.dump(userProgress)
+        attemptCounter = 0
+        successCounter = 0
+        for element in userProgresJson:
+            attemptCounter += element["attempts"]
+            successCounter += element["success"]
+        userStats["totalAttemptsAndSuccess"].append(attemptCounter)
+        userStats["totalAttemptsAndSuccess"].append(successCounter)
+        # Convert object to JSON
+        userStatsJson = json.dumps(userStats)
 
-    return render_template("statistics.html")
+        return render_template("statistics.html", userTotalStat=userStatsJson)
+    else:
+        # TODO post request
+        return render_template("statistics.html", userTotalStat={})
 
 
 @app.route("/study/startQuiz", methods=["POST"])

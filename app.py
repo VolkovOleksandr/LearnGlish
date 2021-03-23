@@ -69,9 +69,6 @@ def quiz(topicId):
     topicName = Topics.query.get(topicId)
     userId = session["user_id"]
     if request.method == "GET":
-        # TODO Generate quiz for user based on users data: 1 word - 4 answer
-        # TODO Get random 3 answers from DB
-
         vocab_schema = VocabularySchema(many=True)
         # Get all words from DB by filter
         vocabWords = Vocabularys.query.filter(and_(
@@ -89,10 +86,38 @@ def quiz(topicId):
         userProgress = Progress.query.filter(and_(
             Progress.user_id == userId, Progress.topic_id == topicId)).all()
         jsonUserProgress = progress_schema.dump(userProgress)
+        # Init view object
         quizObj = {}
         if len(jsonUserProgress) != 0:
             # If user have some progress in current quiz get next quiz with Low attempt and success
-            print("NOT NULL")
+            randomObj = jsonVocabsWord[random.randint(
+                0, len(jsonVocabsWord)-1)]
+            # Check if the word in Progress db
+            checkIfObjInOrigress = Progress.query.filter_by(
+                vocabulary_id=randomObj["id"]).first()
+
+            if checkIfObjInOrigress != None:
+                # Already in  db
+                quizObj["question"] = randomObj["origin"]
+                quizObj["tryId"] = randomObj["id"]
+                quizObj["answers"] = [randomObj["translate"]]
+                while len(quizObj["answers"]) < 4:
+                    randomAnswer = jsonVocabsWord[random.randint(
+                        0, len(jsonVocabsWord)-1)]
+                    if randomAnswer["id"] != quizObj["tryId"] and randomAnswer["translate"] not in quizObj["answers"]:
+                        quizObj["answers"].append(randomAnswer["translate"])
+                return render_template("topic_quiz.html", topic_id=topicId, topic_name=topicName.topic, quiz_Obj=quizObj)
+            else:
+                # NOT IN DB
+                quizObj["question"] = randomObj["origin"]
+                quizObj["tryId"] = randomObj["id"]
+                quizObj["answers"] = [randomObj["translate"]]
+                while len(quizObj["answers"]) < 4:
+                    randomAnswer = jsonVocabsWord[random.randint(
+                        0, len(jsonVocabsWord)-1)]
+                    if randomAnswer["id"] != quizObj["tryId"] and randomAnswer["translate"] not in quizObj["answers"]:
+                        quizObj["answers"].append(randomAnswer["translate"])
+                return render_template("topic_quiz.html", topic_id=topicId, topic_name=topicName.topic, quiz_Obj=quizObj)
         else:
             # Get random vocabulary for first quiz in topic
             randomObj = jsonVocabsWord[random.randint(
@@ -107,6 +132,7 @@ def quiz(topicId):
                     quizObj["answers"].append(randomAnswer["translate"])
         return render_template("topic_quiz.html", topic_id=topicId, topic_name=topicName.topic, quiz_Obj=quizObj)
     else:
+        # POST
         userAnswer = request.form.get("answer")
         tryId = request.form.get("tryId")
         if userAnswer == None:
@@ -116,7 +142,6 @@ def quiz(topicId):
             checkWord = Vocabularys.query.get(tryId)
             checkProgress = Progress.query.filter(and_(
                 Progress.user_id == userId, Progress.topic_id == topicId, Progress.vocabulary_id == tryId)).first()
-            print(userAnswer, tryId, checkProgress)
             # Check if user don't have the word in progress then add one
             if checkProgress == None:
                 progress = Progress(

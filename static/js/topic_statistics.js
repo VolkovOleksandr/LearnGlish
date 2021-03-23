@@ -1,8 +1,10 @@
 var ctx = document.getElementById("myChart").getContext("2d");
 var ctxr = document.getElementById("myChartRound").getContext("2d");
+// Chart configuration
 Chart.defaults.global.legend.display = false;
+// Get data from server
 var userStatsJson = $('#userStat').data("stats");
-
+// First diadram for worda and phrases
 var myChart = new Chart(ctx, {
   type: "bar",
   data: {
@@ -25,17 +27,18 @@ var myChart = new Chart(ctx, {
         {
           ticks: {
             beginAtZero: true,
+            stepSize: 1
           },
         },
       ],
     },
   },
 });
-// ROUND
+// Second diagram for attempts and successfuly passes quiz
 var myChartRound = new Chart(ctxr, {
   type: "doughnut",
   data: {
-    labels: ["Word", "Phrases"],
+    labels: ["Attempts", "Success"],
     datasets: [
       {
         data: userStatsJson.attemptsAndSuccess,

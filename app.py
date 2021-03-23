@@ -180,11 +180,26 @@ def study(topic_id):
     vocabsPhrases = Vocabularys.query.filter(and_(
         Vocabularys.user_id == userId, Vocabularys.topic_id == topic_id, Vocabularys.type == "phrase")).all()
     jsonVocabsPhrases = vocab_schema.dump(vocabsPhrases)
-    # TODO Generate obj for statiscic from DB
+    # Generate obj for statiscic from DB
     temp = {
-        "wordAndPhrases": [1, 5],
-        "attemptsAndSuccess": [3, 1]
+        "wordAndPhrases": [],
+        "attemptsAndSuccess": []
     }
+    # Get data from Vocabulary table
+    temp["wordAndPhrases"].append(len(vocabsWord))
+    temp["wordAndPhrases"].append(len(vocabsPhrases))
+    # Get data from Progress table
+    progressAttemptSchema = ProgressSchema(many=True)
+    progressAttempts = Progress.query.filter(and_(
+        Progress.user_id == userId, Progress.topic_id == topic_id)).all()
+    jsonAttempts = progressAttemptSchema.dump(progressAttempts)
+    attemptsCounter = 0
+    successCounter = 0
+    for element in jsonAttempts:
+        attemptsCounter += element["attempts"]
+        successCounter += element["success"]
+    temp["attemptsAndSuccess"].append(attemptsCounter)
+    temp["attemptsAndSuccess"].append(successCounter)
     topicStatistic = json.dumps(temp)
     return render_template("study.html", topicTitle=topicTitle, vocabs=jsonVocabsWord, vocabsPh=jsonVocabsPhrases, userStat=topicStatistic)
 

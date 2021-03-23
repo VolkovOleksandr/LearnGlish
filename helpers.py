@@ -49,3 +49,8 @@ def checkUserInfo(user, email, password, confirmation):
         return "Password not match"
 
     return True
+
+
+def percent(value):
+    """Format value as %."""
+    return f"{value:,.2f} %"

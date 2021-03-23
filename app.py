@@ -7,7 +7,7 @@ from werkzeug.exceptions import default_exceptions, HTTPException, InternalServe
 from werkzeug.security import check_password_hash, generate_password_hash
 import random
 
-from helpers import apology, login_required, checkUserInfo
+from helpers import apology, login_required, checkUserInfo, percent
 from models.user import Users, topic_identifier
 from models.topic import Topics
 from models.vocabulary import Vocabularys
@@ -24,6 +24,8 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///learnglish.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db.init_app(app)
 ma.init_app(app)
+# Jinja filters
+app.jinja_env.filters["percent"] = percent
 
 # Creare db
 with app.app_context():
@@ -55,8 +57,30 @@ def index():
     return render_template("index.html")
 
 
-@app.route("/statistics", methods=["GET", "POST"])
-# @login_required
+@app.route("/statistics/delete", methods=["POST"])
+@login_required
+def statisticDelete():
+    topicId = request.form["deletedTopicId"]
+    # Erase user progress for current topic Id
+    progress_schema = ProgressSchema(many=True)
+    userProgress = Progress.query.filter(
+        and_(Progress.user_id == session["user_id"], Progress.topic_id == topicId)).all()
+    progressToJSON = progress_schema.dump(userProgress)
+    # Check if user has progress in DB
+    if len(progressToJSON) == 0:
+        flash("No statistics for erasing")
+        return redirect("/statistics")
+    # Eraising data in DB
+    for item in userProgress:
+        item.attempts = 0
+        item.success = 0
+        db.session.commit()
+    flash("Topic sucsessfuly eraised!")
+    return redirect("/statistics")
+
+
+@ app.route("/statistics")
+@ login_required
 def statistics():
     userId = session["user_id"]
     if request.method == "GET":
@@ -87,21 +111,51 @@ def statistics():
         # Convert object to JSON
         userStatsJson = json.dumps(userStats)
 
-        return render_template("statistics.html", userTotalStat=userStatsJson)
-    else:
-        # TODO post request
-        return render_template("statistics.html", userTotalStat={})
+        # TODO Generate data for userProgress block based on DB Topics and Progres
+        # Creare schema for Topic
+        progressArray = []
+
+        topic_schema = TopicSchema(many=True)
+        user = Users.query.get(session["user_id"])
+        # Get all topics from DB by UserId
+        topics = Topics.query.join(topic_identifier).join(Users).filter(
+            (topic_identifier.c.user_id == user.id)).all()
+        jsonTopics = topic_schema.dump(topics)
+        # Create schema for Progress for each topic
+        progress_schema = ProgressSchema(many=True)
+        for topic in jsonTopics:
+            progressInfoObj = {
+                "topicId": 0,
+                "topic": "",
+                "attempts": 0,
+                "success": 0
+            }
+            countProgressAttempts = 0
+            countProgressSuccess = 0
+            progressInfoObj["topicId"] = topic["id"]
+            progressInfoObj["topic"] = topic["topic"]
+            # Get statistic for each topic
+            userProgress = Progress.query.filter(and_(
+                Progress.user_id == userId, Progress.topic_id == topic["id"])).all()
+            progressToJSON = progress_schema.dump(userProgress)
+            for element in progressToJSON:
+                countProgressAttempts += element["attempts"]
+                countProgressSuccess += element["success"]
+            progressInfoObj["attempts"] = countProgressAttempts
+            progressInfoObj["success"] = countProgressSuccess
+            progressArray.append(progressInfoObj)
+        return render_template("statistics.html", userTotalStat=userStatsJson, progressInfo=progressArray)
 
 
-@app.route("/study/startQuiz", methods=["POST"])
-@login_required
+@ app.route("/study/startQuiz", methods=["POST"])
+@ login_required
 def startQuiz():
     topicId = request.form["topicId"]
     return redirect("/study/quiz/{}".format(topicId))
 
 
-@app.route("/study/quiz/<string:topicId>", methods=["GET", "POST"])
-@login_required
+@ app.route("/study/quiz/<string:topicId>", methods=["GET", "POST"])
+@ login_required
 def quiz(topicId):
     # Get topic name
     topicName = Topics.query.get(topicId)
@@ -204,8 +258,8 @@ def quiz(topicId):
                 return redirect("/study/quiz/{}".format(topicId))
 
 
-@app.route("/study/<string:topic_id>")
-@login_required
+@ app.route("/study/<string:topic_id>")
+@ login_required
 def study(topic_id):
     topicTitle = Topics.query.get(topic_id)
     userId = session["user_id"]
@@ -242,8 +296,8 @@ def study(topic_id):
     return render_template("study.html", topicTitle=topicTitle, vocabs=jsonVocabsWord, vocabsPh=jsonVocabsPhrases, userStat=topicStatistic)
 
 
-@app.route("/study/phrase/add", methods=["POST"])
-@login_required
+@ app.route("/study/phrase/add", methods=["POST"])
+@ login_required
 def addPhrase():
     # Get gata from user
     topicId = request.form["topicId"]
@@ -263,8 +317,8 @@ def addPhrase():
     return redirect("/study/{}".format(topicId))
 
 
-@app.route("/study/phrase/edit", methods=["POST"])
-@login_required
+@ app.route("/study/phrase/edit", methods=["POST"])
+@ login_required
 def editPhrase():
     # Get gata from user
     topicId = request.form["topicId"]
@@ -285,8 +339,8 @@ def editPhrase():
     return redirect("/study/{}".format(topicId))
 
 
-@app.route("/study/phrase/delete", methods=["POST"])
-@login_required
+@ app.route("/study/phrase/delete", methods=["POST"])
+@ login_required
 def deletePhrase():
     topicId = request.form["topicId"]
     phraseId = request.form["deleteId"]
@@ -297,8 +351,8 @@ def deletePhrase():
     return redirect("/study/{}".format(topicId))
 
 
-@app.route("/study/word/add", methods=["POST"])
-@login_required
+@ app.route("/study/word/add", methods=["POST"])
+@ login_required
 def addWord():
     # Get gata from user
     topicId = request.form["topicId"]
@@ -318,8 +372,8 @@ def addWord():
     return redirect("/study/{}".format(topicId))
 
 
-@app.route("/study/word/edit", methods=["POST"])
-@login_required
+@ app.route("/study/word/edit", methods=["POST"])
+@ login_required
 def editWord():
     # Get gata from user
     topicId = request.form["topicId"]
@@ -340,8 +394,8 @@ def editWord():
     return redirect("/study/{}".format(topicId))
 
 
-@app.route("/study/word/delete", methods=["POST"])
-@login_required
+@ app.route("/study/word/delete", methods=["POST"])
+@ login_required
 def deleteWord():
     topicId = request.form["topicId"]
     wordId = request.form["deleteId"]
@@ -352,8 +406,8 @@ def deleteWord():
     return redirect("/study/{}".format(topicId))
 
 
-@app.route("/topics")
-@login_required
+@ app.route("/topics")
+@ login_required
 def topics():
     # Creare schema for Topic
     topic_schema = TopicSchema(many=True)
@@ -368,8 +422,8 @@ def topics():
     return render_template("topics.html", userTopics=jsonTopics)
 
 
-@app.route("/topics/add", methods=["POST"])
-@login_required
+@ app.route("/topics/add", methods=["POST"])
+@ login_required
 def addNewTopic():
     topicInput = request.form["topic"]
     # Get user and check if topick in DB
@@ -393,8 +447,8 @@ def addNewTopic():
         return redirect("/topics")
 
 
-@app.route("/study/topic/edit", methods=["POST"])
-@login_required
+@ app.route("/study/topic/edit", methods=["POST"])
+@ login_required
 def editTopic():
     # Get gata from user
     topicId = request.form["topicId"]
@@ -407,8 +461,8 @@ def editTopic():
     return redirect("/study/{}".format(topicId))
 
 
-@app.route("/study/topic/delete", methods=["POST"])
-@login_required
+@ app.route("/study/topic/delete", methods=["POST"])
+@ login_required
 def deleteTopic():
     # Get gata from user
     topicId = request.form["topicId"]
@@ -420,8 +474,8 @@ def deleteTopic():
     return redirect("/topics")
 
 
-@app.route("/topicSearch", methods=["POST"])
-@login_required
+@ app.route("/topicSearch", methods=["POST"])
+@ login_required
 def topicSearch():
     # Creare schema for Topic
     topic_schema = TopicSchema(many=True)
@@ -435,8 +489,8 @@ def topicSearch():
     return jsonify(jsonTopics)
 
 
-@app.route("/study/getWordById", methods=["POST"])
-@login_required
+@ app.route("/study/getWordById", methods=["POST"])
+@ login_required
 def getWordById():
     # Creare schema for Vocabulary
     vocab_schema = VocabularySchema()
@@ -449,7 +503,7 @@ def getWordById():
     return jsonify(jsonVocab)
 
 
-@app.route("/login", methods=["GET", "POST"])
+@ app.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
         userEmail = request.form["email"].lower()
@@ -474,7 +528,7 @@ def login():
         return render_template("login.html")
 
 
-@app.route("/register", methods=["GET", "POST"])
+@ app.route("/register", methods=["GET", "POST"])
 def register():
     if request.method == "POST":
         userName = request.form.get("username")
@@ -505,8 +559,8 @@ def register():
         return render_template("register.html")
 
 
-@app.route("/logout")
-@login_required
+@ app.route("/logout")
+@ login_required
 def logout():
     # Forget any user_id
     session.clear()

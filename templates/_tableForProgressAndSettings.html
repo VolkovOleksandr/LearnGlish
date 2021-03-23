@@ -5,7 +5,41 @@
   role="tabpanel"
   aria-labelledby="progress-tab"
 >
-  <h3>Progress</h3>
+  <table class="table table-hover">
+    <thead>
+      <tr class="row justify-content-center">
+        <th class="col-7">Topic</th>
+        <th class="col-3">Progres</th>
+        <th class="col-2 text-center">Clear Statistic</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for progress in progressInfo %}
+      <tr class="row justify-content-center">
+        <th class="col-7">{{ progress.topic}}</th>
+        {% if progress.attempts == 0 %}
+        <th class="col-3">{{ 0|percent}}</th>
+        {% else %}
+        <th class="col-3">
+          {{ (100 / progress.attempts * progress.success)|percent}}
+        </th>
+        {%endif%}
+        <th class="col-2 d-flex justify-content-center">
+          <button
+            type="button"
+            class="btn btn-danger"
+            data-toggle="modal"
+            name="deleteStatistics"
+            value="{{ progress.topicId }}"
+            data-target="#progressModalDelete"
+          >
+            Erase
+          </button>
+        </th>
+      </tr>
+      {% endfor%}
+    </tbody>
+  </table>
 </div>
 <!-- Settings -->
 <div

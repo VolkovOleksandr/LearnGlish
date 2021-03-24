@@ -48,5 +48,62 @@
   role="tabpanel"
   aria-labelledby="phrases-tab"
 >
-  <h3>Settings</h3>
+  <h4 class="mt-4">Personal info:</h4>
+  <!-- Name -->
+  <div class="row justify-content-center">
+    <div class="col-6 text-center">
+      <p>Full name:</p>
+    </div>
+    <div class="col-6 text-center">
+      <p>{{userSettings.name}}</p>
+    </div>
+  </div>
+  <!-- Email -->
+  <div class="row justify-content-center">
+    <div class="col-6 text-center">
+      <p>Email:</p>
+    </div>
+    <div class="col-6 text-center">
+      <p>{{userSettings.email}}</p>
+    </div>
+  </div>
+  <!-- Change name and pussword -->
+  <div class="row justify-content-center mt-3">
+    <div class="col-2 text-center">
+      <button
+        type="button"
+        class="btn btn-info"
+        data-toggle="modal"
+        name="changeName"
+        value="{{ userSettings.id }}"
+        data-target="#settingsChangeName"
+      >
+        Change name
+      </button>
+    </div>
+    <div class="col-2 text-center">
+      <button
+        type="button"
+        class="btn btn-info"
+        data-toggle="modal"
+        name="changePassword"
+        value="{{ userSettings.id }}"
+        data-target="#settingsChangePassword"
+      >
+        Change password
+      </button>
+    </div>
+    <div class="col-2 text-center">
+      <button
+        type="button"
+        class="btn btn-info"
+        data-toggle="modal"
+        name="changeEmail"
+        value="{{ userSettings.id }}"
+        data-target="#settingsChangeEmail"
+      >
+        Change Email
+      </button>
+    </div>
+  </div>
 </div>

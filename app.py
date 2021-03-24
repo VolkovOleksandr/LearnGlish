@@ -1,6 +1,7 @@
 from tempfile import mkdtemp, tempdir
 from flask import Flask, flash, json, redirect, render_template, request, session, jsonify
 from flask_session import Session
+import flask_session
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy import and_
 from werkzeug.exceptions import default_exceptions, HTTPException, InternalServerError
@@ -15,6 +16,7 @@ from models.progress import Progress
 from models.topicSchema import TopicSchema
 from models.vocabularySchema import VocabularySchema
 from models.progressSchema import ProgressSchema
+from models.userSchema import UserSchema
 from models.db import db
 from models.ma import ma
 
@@ -83,68 +85,118 @@ def statisticDelete():
 @ login_required
 def statistics():
     userId = session["user_id"]
-    if request.method == "GET":
-        # Get data from Vocabulary and save to JSON object
-        userStats = {
-            "totalWordsAndPhrases": [],
-            "totalAttemptsAndSuccess": []
+    # Get data from Vocabulary and save to JSON object
+    userStats = {
+        "totalWordsAndPhrases": [],
+        "totalAttemptsAndSuccess": []
+    }
+    # DB query
+    vocabWords = Vocabularys.query.filter(and_(
+        Vocabularys.user_id == userId, Vocabularys.type == "word")).all()
+    vocabPhrases = Vocabularys.query.filter(and_(
+        Vocabularys.user_id == userId, Vocabularys.type == "phrase")).all()
+    userStats["totalWordsAndPhrases"].append(len(vocabWords))
+    userStats["totalWordsAndPhrases"].append(len(vocabPhrases))
+    # Count total amount of Attempts and success
+    progress_schema = ProgressSchema(many=True)
+    userProgress = Progress.query.filter(
+        Progress.user_id == userId).all()
+    userProgresJson = progress_schema.dump(userProgress)
+    attemptCounter = 0
+    successCounter = 0
+    for element in userProgresJson:
+        attemptCounter += element["attempts"]
+        successCounter += element["success"]
+    userStats["totalAttemptsAndSuccess"].append(attemptCounter)
+    userStats["totalAttemptsAndSuccess"].append(successCounter)
+    # Convert object to JSON
+    userStatsJson = json.dumps(userStats)
+    progressArray = []
+
+    # Creare schema for Topic
+    topic_schema = TopicSchema(many=True)
+    user = Users.query.get(session["user_id"])
+    # Get all topics from DB by UserId
+    topics = Topics.query.join(topic_identifier).join(Users).filter(
+        (topic_identifier.c.user_id == user.id)).all()
+    jsonTopics = topic_schema.dump(topics)
+    # Create schema for Progress for each topic
+    progress_schema = ProgressSchema(many=True)
+    for topic in jsonTopics:
+        progressInfoObj = {
+            "topicId": 0,
+            "topic": "",
+            "attempts": 0,
+            "success": 0
         }
-        # DB query
-        vocabWords = Vocabularys.query.filter(and_(
-            Vocabularys.user_id == userId, Vocabularys.type == "word")).all()
-        vocabPhrases = Vocabularys.query.filter(and_(
-            Vocabularys.user_id == userId, Vocabularys.type == "phrase")).all()
-        userStats["totalWordsAndPhrases"].append(len(vocabWords))
-        userStats["totalWordsAndPhrases"].append(len(vocabPhrases))
-        # Count total amount of Attempts and success
-        progress_schema = ProgressSchema(many=True)
-        userProgress = Progress.query.filter(
-            Progress.user_id == userId).all()
-        userProgresJson = progress_schema.dump(userProgress)
-        attemptCounter = 0
-        successCounter = 0
-        for element in userProgresJson:
-            attemptCounter += element["attempts"]
-            successCounter += element["success"]
-        userStats["totalAttemptsAndSuccess"].append(attemptCounter)
-        userStats["totalAttemptsAndSuccess"].append(successCounter)
-        # Convert object to JSON
-        userStatsJson = json.dumps(userStats)
+        countProgressAttempts = 0
+        countProgressSuccess = 0
+        progressInfoObj["topicId"] = topic["id"]
+        progressInfoObj["topic"] = topic["topic"]
+        # Get statistic for each topic
+        userProgress = Progress.query.filter(and_(
+            Progress.user_id == userId, Progress.topic_id == topic["id"])).all()
+        progressToJSON = progress_schema.dump(userProgress)
+        for element in progressToJSON:
+            countProgressAttempts += element["attempts"]
+            countProgressSuccess += element["success"]
+        progressInfoObj["attempts"] = countProgressAttempts
+        progressInfoObj["success"] = countProgressSuccess
+        progressArray.append(progressInfoObj)
 
-        # TODO Generate data for userProgress block based on DB Topics and Progres
-        # Creare schema for Topic
-        progressArray = []
+    # Get data for setting Tab
+    userSchema = UserSchema()
+    userInfo = Users.query.get(userId)
+    userInfoJson = userSchema.dump(userInfo)
 
-        topic_schema = TopicSchema(many=True)
-        user = Users.query.get(session["user_id"])
-        # Get all topics from DB by UserId
-        topics = Topics.query.join(topic_identifier).join(Users).filter(
-            (topic_identifier.c.user_id == user.id)).all()
-        jsonTopics = topic_schema.dump(topics)
-        # Create schema for Progress for each topic
-        progress_schema = ProgressSchema(many=True)
-        for topic in jsonTopics:
-            progressInfoObj = {
-                "topicId": 0,
-                "topic": "",
-                "attempts": 0,
-                "success": 0
-            }
-            countProgressAttempts = 0
-            countProgressSuccess = 0
-            progressInfoObj["topicId"] = topic["id"]
-            progressInfoObj["topic"] = topic["topic"]
-            # Get statistic for each topic
-            userProgress = Progress.query.filter(and_(
-                Progress.user_id == userId, Progress.topic_id == topic["id"])).all()
-            progressToJSON = progress_schema.dump(userProgress)
-            for element in progressToJSON:
-                countProgressAttempts += element["attempts"]
-                countProgressSuccess += element["success"]
-            progressInfoObj["attempts"] = countProgressAttempts
-            progressInfoObj["success"] = countProgressSuccess
-            progressArray.append(progressInfoObj)
-        return render_template("statistics.html", userTotalStat=userStatsJson, progressInfo=progressArray)
+    return render_template("statistics.html", userTotalStat=userStatsJson, progressInfo=progressArray, userSettings=userInfoJson)
+
+# change user name
+
+
+@ app.route("/settings/changeName", methods=["POST"])
+@ login_required
+def changeName():
+    userId = request.form["userId"]
+    userNewName = request.form["changeName"]
+    userChanges = Users.query.get(userId)
+    userChanges.name = userNewName
+    db.session.commit()
+    flash("Your name successfuly changed")
+    return redirect("/statistics")
+
+# change user email
+
+
+@ app.route("/settings/changeEmail", methods=["POST"])
+@ login_required
+def changeEmail():
+    userId = request.form["userId"]
+    userNewEmail = request.form["changeEmail"]
+    userChanges = Users.query.get(userId)
+    userChanges.email = userNewEmail
+    db.session.commit()
+    flash("Your email successfuly changed")
+    return redirect("/statistics")
+
+# Change user password
+
+
+@ app.route("/settings/changePassword", methods=["POST"])
+@ login_required
+def changePassword():
+    userId = request.form["userId"]
+    userNewPassword = request.form["changePassword"]
+    userOldPassword = request.form["oldPassword"]
+    userChanges = Users.query.get(userId)
+    if check_password_hash(userChanges.password, userOldPassword) and (len(userNewPassword) > 5):
+        flash("Password successfuly changed")
+        userChanges.password = generate_password_hash(userNewPassword)
+        db.session.commit()
+    else:
+        return apology("Old password doen't match or new password too short", 400)
+
+    return redirect("/statistics")
 
 
 @ app.route("/study/startQuiz", methods=["POST"])

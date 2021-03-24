@@ -33,6 +33,7 @@
           >Study Progress</a
         >
       </li>
+      <!-- TODO settings tab: show info and abiliti to change passwors -->
       <li class="nav-item col-6" role="presentation">
         <a
           class="nav-link"
@@ -56,4 +57,6 @@
 <script src="/static/js/user_statistics.js" charset="utf-8"></script>
 <script src="/static/js/progress_delete.js" charset="utf-8"></script>
 <!-- Include Modals -->
-{% include '_progress_delete.html'%} {% endblock %}
+{% include '_progress_delete.html'%}{% include '_settings_change_name.html'%} {%
+include '_settings_change_email.html'%} {% include
+'_settings_change_password.html'%} {% endblock %}

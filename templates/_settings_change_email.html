@@ -1,0 +1,43 @@
+<!-- Modal Change Name-->
+<div
+  class="modal fade"
+  id="settingsChangeEmail"
+  tabindex="-1"
+  role="dialog"
+  aria-labelledby="exampleModalCenterTitle"
+  aria-hidden="true"
+>
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLongTitle">Edit email</h5>
+        <button
+          type="button"
+          class="close"
+          data-dismiss="modal"
+          aria-label="Close"
+        >
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form action="/settings/changeEmail" method="post">
+          <div class="input-group">
+            <input type="hidden" name="userId" value="{{ userSettings.id }}" />
+            <input
+              class="form-control mb-3"
+              autocomplete="off"
+              name="changeEmail"
+              id="changeEmail"
+              placeholder="{{ userSettings.email }}"
+              value="{{ userSettings.email }}"
+            />
+          </div>
+          <button type="submit" class="btn btn-primary form-control">
+            Change
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

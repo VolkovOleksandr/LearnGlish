@@ -15,6 +15,7 @@ class Users(db.Model):
     password = db.Column(db.String, nullable=False)
     vocabularys = db.relationship('Vocabularys')
     progress = db.relationship('Progress')
+    news = db.relationship('News')
     topics = db.relationship('Topics', secondary=topic_identifier)
     # Create function to return String
 

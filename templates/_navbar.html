@@ -27,7 +27,11 @@
       <li class="nav-item">
         <a class="nav-link" href="/logout">SignOut</a>
       </li>
-      {% else %}
+      {%if session.email == "admin@admin"%}
+      <li class="nav-item">
+        <a class="nav-link" href="/admin">Admin</a>
+      </li>
+      {%endif%} {% else %}
       <li class="nav-item active">
         <a class="nav-link" href="/">Home </a>
       </li>

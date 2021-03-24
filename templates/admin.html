@@ -1,0 +1,92 @@
+{% extends "layout.html" %} {% block title %} Login {% endblock %} {% block main
+%}
+<!-- Admin -->
+<div class="row justify-content-center mb-3">
+  <h3>Admin panel</h3>
+</div>
+
+<div id="admin_container">
+  <div class="row">
+    <div class="col-3">
+      <div class="list-group" id="catrgoryList" role="tablist">
+        <a
+          class="list-group-item list-group-item-action active"
+          id="newsList"
+          data-toggle="list"
+          href="#list-news"
+          role="tab"
+          aria-controls="list-news"
+          >News</a
+        >
+        <a
+          class="list-group-item list-group-item-action"
+          id="public"
+          data-toggle="list"
+          href="#publicList"
+          role="tab"
+          aria-controls="listPublic"
+          >Public</a
+        >
+      </div>
+    </div>
+    <!-- CONTENT -->
+    <div class="col-9">
+      <div class="tab-content" id="adminContent">
+        <div
+          class="tab-pane fade show active"
+          id="list-news"
+          role="tabpanel"
+          aria-labelledby="newsList"
+        >
+          <div class="row mb-3 justify-content-end">
+            <button
+              type="button"
+              class="btn btn-info"
+              data-toggle="modal"
+              data-target="#newsModalAdd"
+            >
+              Add news
+            </button>
+          </div>
+
+          {%for news in newsList%}
+          <div class="row mb-2">
+            <div class="col-10">{{news.title}}</div>
+            <div class="col-2">
+              <div class="d-flex justify-content-end">
+                <button
+                  type="button"
+                  name="btnNewsDelete"
+                  class="btn btn-danger"
+                  data-toggle="modal"
+                  data-target="#newsDelete"
+                  value="{{news.id}}"
+                >
+                  delete
+                </button>
+              </div>
+            </div>
+          </div>
+          {%endfor%}
+
+        </div>
+          <div
+            class="tab-pane fade"
+            id="publicList"
+            role="tabpanel"
+            aria-labelledby="public"
+          >
+            LPUBßorem ipsum dolor sit amet, consectetur adipisicing elit. Qui
+            labore debitis minus unde incidunt saepe mollitia nemo quae
+            molestias neque magni nulla, tempore, autem dolore doloribus alias
+            veniam reiciendis. Quod.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<!-- Include JS -->
+<script src="/static/js/news_delete.js" charset="utf-8"></script>
+  {% include '_news_add.html'%} {% include '_news_delete.html'%} {% endblock %}
+</div>

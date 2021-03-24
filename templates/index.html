@@ -34,32 +34,18 @@
     <span class="sr-only">Next</span>
   </a>
 </div>
-<div id="newsBlock">
-  <div class="row">
-    <div class="col-sm-6">
-      <div class="card">
-        <div class="card-body">
-          <h5 class="card-title">Special title treatment</h5>
-          <p class="card-text">
-            With supporting text below as a natural lead-in to additional
-            content.
-          </p>
-          <a href="#" class="btn btn-primary">Go somewhere</a>
-        </div>
-      </div>
-    </div>
-    <div class="col-sm-6">
-      <div class="card">
-        <div class="card-body">
-          <h5 class="card-title">Special title treatment</h5>
-          <p class="card-text">
-            With supporting text below as a natural lead-in to additional
-            content.
-          </p>
-          <a href="#" class="btn btn-primary">Go somewhere</a>
-        </div>
+<!-- News bloc -->
+<div class="row" id="newsBlock">
+  {%for news in newsList%}
+  <div class="col-sm-6 mb-3">
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title">{{news.title}}</h5>
+        <p class="card-text">{{news.short}}</p>
+        <a href="/readNews/{{news.id}}" class="btn btn-primary">Read news</a>
       </div>
     </div>
   </div>
+  {%endfor%}
 </div>
 {% endblock %}

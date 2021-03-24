@@ -1,3 +1,4 @@
+from os import sendfile
 from tempfile import mkdtemp, tempdir
 from flask import Flask, flash, json, redirect, render_template, request, session, jsonify
 from flask_session import Session
@@ -13,10 +14,12 @@ from models.user import Users, topic_identifier
 from models.topic import Topics
 from models.vocabulary import Vocabularys
 from models.progress import Progress
+from models.news import News
 from models.topicSchema import TopicSchema
 from models.vocabularySchema import VocabularySchema
 from models.progressSchema import ProgressSchema
 from models.userSchema import UserSchema
+from models.newsSchema import NewsSchema
 from models.db import db
 from models.ma import ma
 
@@ -55,9 +58,83 @@ Session(app)
 
 @app.route("/")
 def index():
+    news = News.query.all()
+    newsSchema = NewsSchema(many=True)
+    newsJson = newsSchema.dump(news)
+    newsArray = []
 
-    return render_template("index.html")
+    for element in newsJson:
+        newsJsonList = {
+            "title": "",
+            "id": 0,
+            "short": ""
+        }
+        newsJsonList["title"] = element["title"]
+        newsJsonList["id"] = element["id"]
+        short = element["text"][:120]
+        newsJsonList["short"] = short
+        newsArray.append(newsJsonList)
+    return render_template("index.html", newsList=newsArray)
 
+# admin control panel
+
+
+@app.route("/admin")
+@login_required
+def admin():
+    if(session["email"] == "admin@admin"):
+        news = News.query.filter(
+            News.user_id == session["user_id"]).all()
+        newsSchema = NewsSchema(many=True)
+        newsJson = newsSchema.dump(news)
+        return render_template("admin.html", newsList=newsJson)
+    else:
+        return apology("Not permitted", 400)
+
+# Add news
+
+
+@app.route("/admin/news/add", methods=["POST"])
+@login_required
+def addNews():
+    title = request.form["newsTitle"]
+    text = request.form["newsText"]
+    news = News(user_id=session["user_id"], title=title, text=text)
+    try:
+        db.session.add(news)
+        db.session.commit()
+        flash("News succsessfuly added")
+        return redirect("/admin")
+    except IntegrityError as e:
+        # Check if News already exist in DB by title
+        # return errorhandler(e) alternative variant from server eror
+        return apology("News already exist", 400)
+
+# Schow news by Id
+
+
+@app.route("/readNews/<string:newsId>")
+def readNews(newsId):
+    news = News.query.get(newsId)
+    newSchema = NewsSchema()
+    newsJson = newSchema.dump(news)
+    return render_template("news.html", newsObject=newsJson)
+
+# Delete news by id
+
+
+@app.route("/news/delete", methods=["POST"])
+@login_required
+def newsDelete():
+    newsId = request.form["deleteNewsId"]
+    news = News.query.get(newsId)
+    db.session.delete(news)
+    db.session.commit()
+    flash("News sucsessfuly deleted !")
+    return redirect("/admin")
+
+
+# Clean statistics
 
 @app.route("/statistics/delete", methods=["POST"])
 @login_required
@@ -570,6 +647,7 @@ def login():
             user = Users.query.filter_by(email=userEmail)
             if check_password_hash(user[0].password, userPassword):
                 session["user_id"] = user[0].id
+                session["email"] = user[0].email
                 return redirect("/")
             else:
                 return apology("Password not match", 400)
@@ -599,6 +677,7 @@ def register():
                 db.session.add(newUser)
                 db.session.commit()
                 session["user_id"] = newUser.id
+                session["email"] = newUser.email
                 return redirect("/")
             except IntegrityError as e:
                 # Check if User already exist in DB by email

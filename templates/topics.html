@@ -29,7 +29,10 @@
   {% endfor %}
 </div>
 <!-- TODO Topic pagination HTML integrity-->
-<nav class="row justify-content-center mt-3" aria-label="topic_pagination">
+<nav
+  class="row justify-content-center mt-3 mb-5 fixed-bottom"
+  aria-label="topic_pagination"
+>
   <ul class="pagination">
     <li class="page-item disabled">
       <span class="page-link">Previous</span>
@@ -44,8 +47,8 @@
     </li>
   </ul>
 </nav>
-<hr />
-<h3>Public topics:</h3>
+<!-- TODO public topic comming soon <hr />
+<h3>Public topics:</h3> -->
 
 <!-- Include Modal for add topics button-->
 {% include '_topic_search.html'%}

@@ -87,7 +87,11 @@ def admin():
             News.user_id == session["user_id"]).all()
         newsSchema = NewsSchema(many=True)
         newsJson = newsSchema.dump(news)
-        return render_template("admin.html", newsList=newsJson)
+        # Get all users
+        users = Users.query.all()
+        usersShema = UserSchema(many=True)
+        usersJson = usersShema.dump(users)
+        return render_template("admin.html", newsList=newsJson, usersList=usersJson)
     else:
         return apology("Not permitted", 400)
 

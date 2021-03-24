@@ -25,7 +25,7 @@
           href="#publicList"
           role="tab"
           aria-controls="listPublic"
-          >Public</a
+          >All users</a
         >
       </div>
     </div>
@@ -68,19 +68,44 @@
             </div>
           </div>
           {%endfor%}
-
         </div>
+        <!-- All users list -->
           <div
             class="tab-pane fade"
             id="publicList"
             role="tabpanel"
             aria-labelledby="public"
           >
-            LPUBßorem ipsum dolor sit amet, consectetur adipisicing elit. Qui
-            labore debitis minus unde incidunt saepe mollitia nemo quae
-            molestias neque magni nulla, tempore, autem dolore doloribus alias
-            veniam reiciendis. Quod.
+          <div class="row mb-3">
+            <div class="col-6"><h4>Name</h4></div>
+            <div class="col-6"><h4>Email</h4></div>
           </div>
+            {%for user in usersList%}
+              <div class="row">
+                <div class="col-6">
+                  <h5>{{user.name}}</h5>
+                </div>
+                <div class="col-6">
+                  <h5>{{user.email}}</h5>
+                </div>
+              </div>
+            {%endfor%}
+          </div>
+          <nav class="row justify-content-center mt-3 mb-5 fixed-bottom" aria-label="topic_pagination">
+            <ul class="pagination">
+              <li class="page-item disabled">
+                <span class="page-link">Previous</span>
+              </li>
+              <li class="page-item active"><a class="page-link" href="#">1</a></li>
+              <li class="page-item">
+                <span class="page-link"> 2 </span>
+              </li>
+              <li class="page-item"><a class="page-link" href="#">3</a></li>
+              <li class="page-item">
+                <a class="page-link" href="#">Next</a>
+              </li>
+            </ul>
+          </nav>
         </div>
       </div>
     </div>

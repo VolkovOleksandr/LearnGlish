@@ -21,3 +21,23 @@ Many modern technologies and frameworks were used to write this project, such as
 ### Database structure
 
 ![alt text](https://github.com/VolkovOleksandr/LearnGlish/blob/main/static/img/db.png "DB")
+
+The structure of the database consists of 6 tables such as:
+
+- uerss: used to store personal data of users such as email, password, name.
+- topics: this table is used to store topics.
+- topic_identifier: used to unite users with their topics (many to many).
+- vocabularys: used to store words and phrases.
+- news: this table is used to store news and which are displayed on the index page of the project.
+- progress: progress table of each user.
+
+### Index page
+
+Byde foto
+The main page of the project. This web page has the following structure:
+
+- Navigation Bar on the top of the website: the manu is used to navigate the site - "Home, Sdudy it, My progress,Sign In / Sign Out, Register and Admin panel wich is only available to the administrator" (Dublicated on each page).
+- In the BODY of the site there are 2 blocks:
+  - The first of which Carousel: a slideshow for cycling through of content representing website.
+  - The second is a block of news (Cards), it displays all the news that is on the site. Clicking on read more opens the news page.
+- Also from the bottom is a footer block. Where is the information about the project and who is its developer(Dublicated on each page).

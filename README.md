@@ -4,9 +4,11 @@
 
 ### LearnGlish is a modern, dynamic and flexible tool for learning English.
 
+#### Check it out! On the YouTube
+
 <a href="http://www.youtube.com/watch?feature=player_embedded&v=hoKPcnjr0Zs
 " target="_blank"><img src="http://img.youtube.com/vi/hoKPcnjr0Zs/0.jpg" 
-alt="LearnGlish" width="240" height="180" border="10" /></a>
+alt="LearnGlish" width="500" height="180" border="10" /></a>
 
 With this website, you can easily and quickly customize the study of English words and phrases.
 
@@ -14,13 +16,13 @@ Almost everyone knows and has been scientifically proven that learning a foreign
 
 Many modern technologies and frameworks were used to write this project, such as:
 
-- **Python (Flask)** - as the main tool for creating a web application in the programming language Python. Used to write a backend, most of the logic of the website is written on it.
-- **JavaScript (JQuery)** - was used as an additional tool for fast and dynamic access to program objects and retrieving data from the server without reloading the page.
-- **Bootstrap** - powerful tool for using ready-made solutions for visual components. The project used such components as forms, buttons, navigation panel, etc. And also for responsive on different screens (desktop, tablet and mobile).
-- **HTML** - used to indicate the structure of elements on the website.
-- **CSS** - used to stylize custom objects in the project.
-- **SQLite3 (SQLAlchemy)** - used to create a project database, to store user data. And ORM for convenient work with the database
-- **etc ...** -
+- _Python (Flask)_ - as the main tool for creating a web application in the programming language Python. Used to write a backend, most of the logic of the website is written on it.
+- _JavaScript (JQuery)_ - was used as an additional tool for fast and dynamic access to program objects and retrieving data from the server without reloading the page.
+- _Bootstrap_ - powerful tool for using ready-made solutions for visual components. The project used such components as forms, buttons, navigation panel, etc. And also for responsive on different screens (desktop, tablet and mobile).
+- _HTML_ - used to indicate the structure of elements on the website.
+- _CSS_ - used to stylize custom objects in the project.
+- _SQLite3 (SQLAlchemy)_ - used to create a project database, to store user data. And ORM for convenient work with the database
+- _etc ..._ -
 
 ### Database structure
 
@@ -28,12 +30,12 @@ Many modern technologies and frameworks were used to write this project, such as
 
 The structure of the database consists of 6 tables such as:
 
-- uerss: used to store personal data of users such as email, password, name.
-- topics: this table is used to store topics.
-- topic_identifier: used to unite users with their topics (many to many).
-- vocabularys: used to store words and phrases.
-- news: this table is used to store news and which are displayed on the index page of the project.
-- progress: progress table of each user.
+- **uerss:** used to store personal data of users such as email, password, name.
+- **topics:** this table is used to store topics.
+- **topic_identifier:** used to unite users with their topics (many to many).
+- **vocabularys:** used to store words and phrases.
+- **news:** this table is used to store news and which are displayed on the index page of the project.
+- **progress:** progress table of each user.
 
 ### Index page
 
@@ -80,3 +82,5 @@ This page consists of navigation Tab which contains 2 elements:
 
 - News management tab - allows the administrator to add new news, edit and delete news.
 - All users view tab - displays a list of all users who are registered on the website.
+
+[The project also deployed on Heroku](https://learnglish.herokuapp.com/)

@@ -4,7 +4,9 @@
 
 ### LearnGlish is a modern, dynamic and flexible tool for learning English.
 
-[![IMAGE ALT TEXT HERE](http://img.youtube.com/vi/hoKPcnjr0Zs&ab/0.jpg)](http://www.youtube.com/watch?v=hoKPcnjr0Zs&ab)
+<a href="http://www.youtube.com/watch?feature=player_embedded&v=hoKPcnjr0Zs
+" target="_blank"><img src="http://img.youtube.com/vi/hoKPcnjr0Zs/0.jpg" 
+alt="LearnGlish" width="240" height="180" border="10" /></a>
 
 With this website, you can easily and quickly customize the study of English words and phrases.
 

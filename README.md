@@ -8,7 +8,7 @@
 
 <a href="http://www.youtube.com/watch?feature=player_embedded&v=hoKPcnjr0Zs
 " target="_blank"><img src="http://img.youtube.com/vi/hoKPcnjr0Zs/0.jpg" 
-alt="LearnGlish" width="500" height="180" border="10" /></a>
+alt="LearnGlish" width="350" height="180" border="10" /></a>
 
 With this website, you can easily and quickly customize the study of English words and phrases.
 
